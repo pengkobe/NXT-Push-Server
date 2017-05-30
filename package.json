@@ -11,6 +11,7 @@
   "dependencies": {
     "co": "^4.6.0",
     "debug": "^2.2.0",
+    "huawei-push": "0.0.6-0",
     "jade": "~1.11.0",
     "jsonwebtoken": "^7.1.9",
     "koa": "^2.0.0",
@@ -25,7 +26,8 @@
     "koa-views": "^5.0.1",
     "log4js": "^1.1.1",
     "mini-logger": "^1.1.1",
-    "runkoa": "^1.5.9"
+    "runkoa": "^1.5.9",
+    "xiaomi-push": "^0.5.0"
   },
   "devDependencies": {
     "nodemon": "^1.8.1"
