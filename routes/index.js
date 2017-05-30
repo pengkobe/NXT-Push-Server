@@ -6,7 +6,6 @@ var HWPush = require("huawei-push");
 var MIPush = require("xiaomi-push");
 
 /** 华为推送 LIB */
-
 var HWMessage = HWPush.Message;
 var HWNotification = HWPush.Notification;
 
@@ -36,7 +35,7 @@ module.exports.init = function(router) {
       appId: hw_config.appId,
       appSecret: hw_config.appSecret
     });
-    notification.send("your device token", msg, hw_config.callback);
+    notification.send("0a00000554307310", msg, hw_config.callback);
     ctx.status = 200;
     ctx.body = {
       success: true,
