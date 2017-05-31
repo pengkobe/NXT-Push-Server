@@ -1,5 +1,6 @@
 "use strict";
 
+require("./DateUtil");
 var hw_config = require("./hw_config");
 var xm_config = require("./xm_config");
 var HWPush = require("huawei-push");
@@ -25,17 +26,20 @@ module.exports.init = function(router) {
   });
 
   /**
-   * 测试华为推送API
+   * 华为推送API
    */
-  router.get("/HWNotificationApi", async function(ctx, next) {
-    var msg = new HWMessage();
-    msg.title("testHWApi").content("description example");
-
-    var notification = new HWNotification({
+  router.post("/HWNotificationApi", async function(ctx, next) {
+    let deviceToken = ctx.request.body.deviceToken;
+    let msg = new HWMessage();
+    let nowtime = new Date().getTime();
+    let sendtime = new Date(nowtime+60000);
+    msg.title("testHWApi").content("description example").send_time(sendtime.format("isoDateTime")+"+08:00");
+    let notification = new HWNotification({
       appId: hw_config.appId,
       appSecret: hw_config.appSecret
     });
-    notification.send("0a00000554307310", msg, hw_config.callback);
+    // "0a00000554307310"
+    notification.send(deviceToken, msg, hw_config.callback);
     ctx.status = 200;
     ctx.body = {
       success: true,
@@ -44,7 +48,7 @@ module.exports.init = function(router) {
   });
 
   /**
-   * 测试小米推送API
+   * 小米推送API
    */
   router.get("/MINotificationApi", async function(ctx, next) {
     var msg = new MIMessage();
