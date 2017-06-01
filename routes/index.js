@@ -29,11 +29,20 @@ module.exports.init = function(router) {
    * 华为推送API
    */
   router.post("/HWNotificationApi", async function(ctx, next) {
-    let deviceToken = ctx.request.body.deviceToken;
+    let deviceToken = ctx.request.body.token;
+    // 置于 extras 中区分推送类型
+    let type = ctx.request.body.type;
+    let title = ctx.request.body.title?  ctx.request.body.title: "EFOS";
+    let content = ctx.request.body.content?ctx.request.body.content: "您有新的消息";
+
+    console.log('deviceToken:'+deviceToken+ 'type:'+type+'title:'+title + 'content:'+ content);
+
     let msg = new HWMessage();
     let nowtime = new Date().getTime();
     let sendtime = new Date(nowtime+60000);
-    msg.title("testHWApi").content("description example").send_time(sendtime.format("isoDateTime")+"+08:00");
+    msg.title(title).content(content).send_time(sendtime.format("isoDateTime")+"+08:00").extras({
+      Type:type
+    });
     let notification = new HWNotification({
       appId: hw_config.appId,
       appSecret: hw_config.appSecret
@@ -43,7 +52,7 @@ module.exports.init = function(router) {
     ctx.status = 200;
     ctx.body = {
       success: true,
-      started: false
+      message: ""
     };
   });
 
@@ -53,7 +62,7 @@ module.exports.init = function(router) {
   router.get("/MINotificationApi", async function(ctx, next) {
     var msg = new MIMessage();
     msg
-      .title("testXMApi")
+      .title("EFOS")
       .description("description example")
       .payload("payload description")
       .passThrough(0)
@@ -72,7 +81,7 @@ module.exports.init = function(router) {
     ctx.status = 200;
     ctx.body = {
       success: true,
-      started: false
+      message: ""
     };
   });
 };
