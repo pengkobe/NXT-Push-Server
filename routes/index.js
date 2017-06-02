@@ -30,16 +30,24 @@ module.exports.init = function(router) {
    */
   router.post("/HWNotificationApi", async function(ctx, next) {
     let deviceToken = ctx.request.body.token;
-    // 置于 extras 中区分推送类型
+    
     let type = ctx.request.body.type;
     let title = ctx.request.body.title?  ctx.request.body.title: "EFOS";
     let content = ctx.request.body.content?ctx.request.body.content: "您有新的消息";
-
     console.log('deviceToken:'+deviceToken+ 'type:'+type+'title:'+title + 'content:'+ content);
+    if(!deviceToken){
+        ctx.status = 200;
+        ctx.body = {
+          success: false,
+          message: ""
+        };
+        return;
+    }
 
     let msg = new HWMessage();
     let nowtime = new Date().getTime();
     let sendtime = new Date(nowtime+60000);
+    // 置于 extras 中区分推送类型
     msg.title(title).content(content).send_time(sendtime.format("isoDateTime")+"+08:00").extras({
       Type:type
     });
@@ -47,8 +55,9 @@ module.exports.init = function(router) {
       appId: hw_config.appId,
       appSecret: hw_config.appSecret
     });
-    // "0a00000554307310"
+    // deviceToken:多个token用","分隔
     notification.send(deviceToken, msg, hw_config.callback);
+
     ctx.status = 200;
     ctx.body = {
       success: true,
