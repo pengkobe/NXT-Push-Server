@@ -1,18 +1,24 @@
 "use strict";
 
 require("./DateUtil");
-var hw_config = require("./hw_config");
-var xm_config = require("./xm_config");
-var HWPush = require("huawei-push");
-var MIPush = require("xiaomi-push");
+const hw_config = require("./hw_config");
+const xm_config = require("./xm_config");
+let HWPush = require("huawei-push");
+let MIPush = require("xiaomi-push");
 
 /** 华为推送 LIB */
 var HWMessage = HWPush.Message;
 var HWNotification = HWPush.Notification;
 
+let notification = new HWNotification({
+      appId: hw_config.appId,
+      appSecret: hw_config.appSecret
+});
+
 /** 小米推送 LIB*/
-var MIMessage = MIPush.Message;
-var MINotification = MIPush.Notification;
+let MIMessage = MIPush.Message;
+let MINotification = MIPush.Notification;
+
 
 module.exports.init = function(router) {
   /**
@@ -30,7 +36,10 @@ module.exports.init = function(router) {
    */
   router.post("/HWNotificationApi", async function(ctx, next) {
     let deviceToken = ctx.request.body.token;
-    
+    if (Object.prototype.toString.call(deviceToken) == "[object Array]"){
+        deviceToken = deviceToken.join(',');
+    }
+   
     let type = ctx.request.body.type;
     let title = ctx.request.body.title?  ctx.request.body.title: "EFOS";
     let content = ctx.request.body.content?ctx.request.body.content: "您有新的消息";
@@ -51,13 +60,14 @@ module.exports.init = function(router) {
     msg.title(title).content(content).send_time(sendtime.format("isoDateTime")+"+08:00").extras({
       Type:type
     });
-    let notification = new HWNotification({
-      appId: hw_config.appId,
-      appSecret: hw_config.appSecret
-    });
+    
     // deviceToken:多个token用","分隔
-    notification.send(deviceToken, msg, hw_config.callback);
-
+    (function(deviceToken, msg, hw_config){
+       setTimeout(function(){
+          notification.send(deviceToken, msg, hw_config.callback);
+       }, Math.random()* 1000);
+    })(deviceToken, msg, hw_config);
+   
     ctx.status = 200;
     ctx.body = {
       success: true,
@@ -69,7 +79,7 @@ module.exports.init = function(router) {
    * 小米推送API
    */
   router.get("/MINotificationApi", async function(ctx, next) {
-    var msg = new MIMessage();
+    let msg = new MIMessage();
     msg
       .title("EFOS")
       .description("description example")
@@ -78,12 +88,12 @@ module.exports.init = function(router) {
       .notifyType(-1)
       .extra("badge", 6);
 
-    var notification = new MINotification({
+    let notification = new MINotification({
       production: xm_config.production,
       appSecret: xm_config.appSecret
     });
 
-    var regid = xm_config.regids[0];
+    let regid = xm_config.regids[0];
 
     notification.send(regid, msg, xm_config.callback);
 
