@@ -43,7 +43,15 @@ module.exports.init = function(router) {
     let type = ctx.request.body.type;
     let title = ctx.request.body.title?  ctx.request.body.title: "EFOS";
     let content = ctx.request.body.content?ctx.request.body.content: "您有新的消息";
+
+    let PCode = ctx.request.body.PCode?ctx.request.body.PCode: "";
+    let Count = ctx.request.body.Count?ctx.request.body.Count: "";
+    let PName = ctx.request.body.PName?ctx.request.body.PName: "";
+    let PlatformCode = ctx.request.body.PlatformCode?ctx.request.body.PlatformCode: "";
+    let WebSiteUrl = ctx.request.body.WebSiteUrl?ctx.request.body.WebSiteUrl: "";
+
     console.log('deviceToken:'+deviceToken+ 'type:'+type+'title:'+title + 'content:'+ content);
+    console.log('PCode:'+PCode+ 'Count:'+Count+'PName:'+PName + 'PlatformCode:'+ PlatformCode+ 'WebSiteUrl:'+ WebSiteUrl);
     if(!deviceToken){
         ctx.status = 200;
         ctx.body = {
@@ -58,7 +66,12 @@ module.exports.init = function(router) {
     let sendtime = new Date(nowtime+60000);
     // 置于 extras 中区分推送类型
     msg.title(title).content(content).send_time(sendtime.format("isoDateTime")+"+08:00").extras({
-      Type:type
+      Type:type,
+      PCode:PCode,
+      Count:Count,
+      PName:PName,
+      PlatformCode:PlatformCode,
+      WebSiteUrl:WebSiteUrl
     });
     
     // deviceToken:多个token用","分隔
@@ -76,7 +89,7 @@ module.exports.init = function(router) {
   });
 
   /**
-   * 小米推送API
+   * 小米推送API（暂未启用）
    */
   router.get("/MINotificationApi", async function(ctx, next) {
     let msg = new MIMessage();
