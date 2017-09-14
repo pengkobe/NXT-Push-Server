@@ -48,6 +48,7 @@ jspm_packages
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 _FE_src/build/Release
 routes/hw_config.js
+routes/hw_config_test.js
 
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
